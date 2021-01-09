@@ -261,9 +261,15 @@ ALTER TABLE public.credit_book
     OWNER to postgres add column is_paid boolean default 'no';
 
 
+ALTER TABLE credit_book ALTER COLUMN is_paid DROP DEFAULT;
+ALTER TABLE credit_book ALTER is_paid TYPE integer USING CASE WHEN is_paid=TRUE THEN 1 ELSE 0 END;
+ALTER TABLE credit_book ALTER COLUMN is_paid SET DEFAULT 0;
+
 -- Trigger: set_created_dttm
 
 -- DROP TRIGGER set_created_dttm ON public.credit_book;
+
+
 
 CREATE TRIGGER set_created_dttm
     BEFORE INSERT
