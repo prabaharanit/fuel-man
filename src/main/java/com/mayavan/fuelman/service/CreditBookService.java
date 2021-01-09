@@ -10,7 +10,7 @@ import com.mayavan.fuelman.repo.model.CreditBookMO;
 @Service
 public interface CreditBookService {
 	
-	public CreditBookMO createCreditBook(CreditBookMO creditBookMO);
+	public CreditBookMO createCreditBook(CreditBookMO creditBookMO)throws Exception;
 	
     public List<CreditBookMO> getAllCreditBook() throws ResourceNotFoundException;
     
