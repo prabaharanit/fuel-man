@@ -2,7 +2,7 @@ package com.mayavan.fuelman.repo.model;
 
 public class FuelPriceMO{
 	private int id;
-	private FuelType fuel_type;
+	private FuelTypeMO fuel_type;
 	private double price;
 	private String date_of_sale;
 	private String from_dttm;
@@ -15,14 +15,14 @@ public class FuelPriceMO{
 
 	}
 
-	public FuelPriceMO(int id, FuelType fuel_type, double price, String date_of_sale, String created_dttm,
+	public FuelPriceMO(int id, FuelTypeMO fuel_type, double price, String date_of_sale, String created_dttm,
 			String modified_dttm, int is_deleted, String from_dttm, String to_dttm) {
 		this.id = id;
 		this.price = price;
 		this.fuel_type = fuel_type;
 		this.date_of_sale = date_of_sale;
-		this.setCreated_dttm(created_dttm);
-		this.setModified_dttm(modified_dttm);
+		this.created_dttm = created_dttm;
+		this.modified_dttm = modified_dttm;
 		this.is_deleted = is_deleted;
 		this.from_dttm = from_dttm;
 		this.to_dttm = to_dttm;
@@ -36,11 +36,11 @@ public class FuelPriceMO{
 		this.id = id;
 	}
 
-	public FuelType getFuel_type() {
+	public FuelTypeMO getFuel_type() {
 		return fuel_type;
 	}
 
-	public void setFuel_type(FuelType fuel_type) {
+	public void setFuel_type(FuelTypeMO fuel_type) {
 		this.fuel_type = fuel_type;
 	}
 
@@ -73,6 +73,7 @@ public class FuelPriceMO{
 	}
 
 	public void setCreated_dttm(String created_dttm) {
+		if(created_dttm != null)
 		this.created_dttm = created_dttm.toString();
 	}
 
