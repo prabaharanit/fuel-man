@@ -26,6 +26,7 @@ import com.mayavan.fuelman.exception.UniqueConstraintException;
 import com.mayavan.fuelman.repo.FuelTypeRepository;
 import com.mayavan.fuelman.repo.model.FuelPriceMO;
 import com.mayavan.fuelman.repo.model.FuelType;
+import com.mayavan.fuelman.repo.model.FuelTypeMO;
 import com.mayavan.fuelman.service.FuelService;
 
 @CrossOrigin(origins = "http://localhost:8081")
@@ -48,11 +49,10 @@ public class FuelTypeController {
 	}
 
 	@GetMapping("/fueltypes/{id}")
-	public ResponseEntity<FuelType> getFuelTypeById(@PathVariable(value = "id") int fueltypeId)
+	public ResponseEntity<FuelTypeMO> getFuelTypeById(@PathVariable(value = "id") int fueltypeId)
 			throws ResourceNotFoundException {
-		FuelType fueltype = fuelTypeRepository.findById(fueltypeId)
-				.orElseThrow(() -> new ResourceNotFoundException("FuelType not found for this id :: " + fueltypeId));
-		return ResponseEntity.ok().body(fueltype);
+		FuelTypeMO fuelTypeMO = fuelService.getFuelTypeById(fueltypeId);
+		return ResponseEntity.ok().body(fuelTypeMO);
 	}
 
 	@PostMapping("/fueltypes")
