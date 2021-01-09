@@ -189,32 +189,27 @@ public class DateAndTimeUtility {
 		final DateTimeZone fromTimeZone = DateTimeZone.forID(fromTimeZoneString.getTimeZoneConstant());
 		final DateTimeZone toTimeZone = DateTimeZone.forID(toTimeZoneString.getTimeZoneConstant());
 		final DateTime dateTime = new DateTime(fromDateTime, fromTimeZone);
-
 		final DateTimeFormatter outputFormatter = DateTimeFormat.forPattern(convertToFormat.getDateFormat()).withZone(toTimeZone);
 		return outputFormatter.print(dateTime);
 	}
 
 	public static String changeDateFormat(String dateString, DATEFORMAT oldFormat, DATEFORMAT newFormat) throws ParseException {
-		System.out.println("date format  " + dateString);
 		DateFormat oldFormatter = new SimpleDateFormat(oldFormat.getDateFormat());
 		oldFormatter.setLenient(false);
 		Date parsedDate = oldFormatter.parse(dateString);
 		String CheckFormat = newFormat.getDateFormat();
 		String dateStringFrom = new SimpleDateFormat(CheckFormat).format(parsedDate);
-		System.out.println("Date is ok = " + dateStringFrom);
 
 		return dateStringFrom;
 	}
 	
 	public static Date changeDateFormat(Date dateString, DATEFORMAT oldFormat, DATEFORMAT newFormat) throws ParseException {
-		System.out.println("date format  " + dateString);
 		DateFormat oldFormatter = new SimpleDateFormat(oldFormat.getDateFormat());
 		oldFormatter.setLenient(false);
 		Date parsedDate = oldFormatter.parse(dateString.toString());
 		String CheckFormat = newFormat.getDateFormat();
 		String dateStringFrom = new SimpleDateFormat(CheckFormat).format(parsedDate);
 		Date convertedDate = new SimpleDateFormat(CheckFormat).parse(dateStringFrom);
-		System.out.println("Date is ok = " + dateStringFrom);
 
 		return convertedDate;
 	}
@@ -228,7 +223,6 @@ public class DateAndTimeUtility {
 		DateFormat newFormatter = new SimpleDateFormat(CheckFormat);
 		String dateStringFrom = newFormatter.format(parsedDate);
 		Date convertedDate = newFormatter.parse(dateStringFrom);
-		System.out.println("Date is ok = " + convertedDate);
 
 		return convertedDate;
 	}
