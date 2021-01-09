@@ -53,23 +53,8 @@ public class VehicleServiceImpl implements VehicleService {
 	@Override
 	public List<VehicleMO> getAllVehicles() {
 		List<VehicleMO> vehicleMOs = new ArrayList<VehicleMO>();
-		vehicleRepository.findAll().forEach(e -> {
-			VehicleMO vehicleMO = mapDOtoMO(e, new VehicleMO());
-			try {
-				VehicleOwner vhOwner = vehicleOwnerRepository.findById(e.getVhOwnerId()).orElseThrow(
-						() -> new ResourceNotFoundException("Vehicle Owner not found for  id :: " + e.getVhOwnerId()));
-				
-				vehicleMO.setVhOwner(vhOwner);
-			} catch (ResourceNotFoundException e1) {
-				new ResourceNotFoundException("Vehicle Owner not found for id :: " + e.getVhOwnerId());
-			}
-			try {
-				VehicleType vhType = vehicleTypeRepository.findById(e.getVhTypeId()).orElseThrow(() -> 
-				new ResourceNotFoundException("Vehicle type not found for  id :: " + e.getVhTypeId()));
-				vehicleMO.setVhType(vhType);
-			}catch(ResourceNotFoundException rExp){
-				new ResourceNotFoundException("Vehicle type not found for id :: " + e.getVhTypeId());
-			}
+		vehicleRepository.findAll().forEach(vehicle -> {
+			VehicleMO vehicleMO = mapDOtoMO(vehicle, new VehicleMO());
 			vehicleMOs.add(vehicleMO);
 		});
 		
@@ -120,12 +105,29 @@ public class VehicleServiceImpl implements VehicleService {
 	private VehicleMO mapDOtoMO(Vehicle vehicle, VehicleMO vehicleMO) {
 		vehicleMO.setId(vehicle.getId());
 		vehicleMO.setNumberPlate(vehicle.getNumberPlate());
-		VehicleType vhType = new VehicleType();
-		vhType.setId(vehicle.getVhTypeId());
-		vehicleMO.setVhType(vhType);
-		VehicleOwner vhOwner = new VehicleOwner();
-		vhOwner.setId(vehicle.getVhOwnerId());
-		vehicleMO.setVhOwner(vhOwner);
+		/*
+		 * VehicleType vhType = new VehicleType(); vhType.setId(vehicle.getVhTypeId());
+		 * vehicleMO.setVhType(vhType);
+		 */
+		//VehicleOwner vhOwner = new VehicleOwner();
+		//vhOwner.setId(vehicle.getVhOwnerId());
+		//vehicleMO.setVhOwner(vhOwner);
+		
+		try {
+			VehicleOwner vhOwner = vehicleOwnerRepository.findById(vehicle.getVhOwnerId()).orElseThrow(
+					() -> new ResourceNotFoundException("Vehicle Owner not found for  id :: " + vehicle.getVhOwnerId()));
+			vehicleMO.setVhOwner(vhOwner);
+		} catch (ResourceNotFoundException e1) {
+			new ResourceNotFoundException("Vehicle Owner not found for id :: " + vehicle.getVhOwnerId());
+		}
+		try {
+			VehicleType vhType = vehicleTypeRepository.findById(vehicle.getVhTypeId()).orElseThrow(() -> 
+			new ResourceNotFoundException("Vehicle type not found for  id :: " + vehicle.getVhTypeId()));
+			vehicleMO.setVhType(vhType);
+		}catch(ResourceNotFoundException rExp){
+			new ResourceNotFoundException("Vehicle type not found for id :: " + vehicle.getVhTypeId());
+		}
+		
 		vehicleMO.setIs_deleted(vehicle.getIs_deleted());
 		vehicleMO.setCreated_dttm(vehicle.getCreated_dttm());
 		vehicleMO.setModified_dttm(vehicle.getModified_dttm());
