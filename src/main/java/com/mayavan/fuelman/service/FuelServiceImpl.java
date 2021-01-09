@@ -24,6 +24,7 @@ import com.mayavan.fuelman.repo.FuelTypeRepository;
 import com.mayavan.fuelman.repo.model.FuelPrice;
 import com.mayavan.fuelman.repo.model.FuelPriceMO;
 import com.mayavan.fuelman.repo.model.FuelType;
+import com.mayavan.fuelman.repo.model.FuelTypeMO;
 import com.mayavan.fuelman.util.DateAndTimeUtility;
 import com.mayavan.fuelman.util.DateAndTimeUtility.DATEFORMAT;
 
@@ -37,6 +38,14 @@ public class FuelServiceImpl implements FuelService {
 
 	@Autowired
 	private FuelTypeRepository fuelTypeRepository;
+	
+	
+	@Override
+	public FuelTypeMO getFuelTypeById(int fueltypeId) throws ResourceNotFoundException {
+		FuelType fuelType = fuelTypeRepository.findById(fueltypeId)
+				.orElseThrow(() -> new ResourceNotFoundException("FuelType not found for this id :: " + fueltypeId));
+		return mapDOtoMO(fuelType, new FuelTypeMO());
+	}
 
 	@Override
 	public FuelPriceMO getFuelPriceById(int fuelPriceId) throws ResourceNotFoundException {
@@ -65,9 +74,6 @@ public class FuelServiceImpl implements FuelService {
 			fuelPriceMO = mapDOtoMO(new FuelPriceMO(), fuelPrice);
 		} catch (ParseException parExp) {
 			throw new Exception("Error while parsing datetime " + dateTime, parExp);
-		}catch (Exception exp) {
-			System.out.println(exp);
-			throw new Exception("Error getting fuel price for datetime selected " , exp);
 		}
 		return fuelPriceMO;
 	}
@@ -95,10 +101,10 @@ public class FuelServiceImpl implements FuelService {
 		fuelPriceRepository.findAll().forEach(e -> {
 			FuelPriceMO fuelPriceMO = mapDOtoMO(new FuelPriceMO(), e);
 			try {
-				FuelType fueltype = fuelTypeRepository.findById(e.getFuel_type_id())
+				FuelType fuelType = fuelTypeRepository.findById(e.getFuel_type_id())
 						.orElseThrow(() -> new ResourceNotFoundException(
 								"FuelType not found for this id :: " + e.getFuel_type_id()));
-				fuelPriceMO.setFuel_type(fueltype);
+				fuelPriceMO.setFuel_type(mapDOtoMO(fuelType, new FuelTypeMO()));
 			} catch (ResourceNotFoundException e1) {
 				new ResourceNotFoundException("FuelType not found for this id :: " + e.getFuel_type_id());
 			}
@@ -182,12 +188,22 @@ public class FuelServiceImpl implements FuelService {
 		return fuelPrice;
 	}
 
+	private FuelTypeMO mapDOtoMO(FuelType fuelType, FuelTypeMO fuelTypeMO){
+		fuelTypeMO.setId(fuelType.getId());
+		fuelTypeMO.setName(fuelType.getName());
+		fuelTypeMO.setType(fuelType.getType());
+		fuelTypeMO.setIs_deleted(fuelType.getIs_deleted());
+		fuelTypeMO.setCreated_dttm(fuelType.getCreated_dttm());
+		fuelTypeMO.setModified_dttm(fuelType.getModified_dttm());
+		return fuelTypeMO;
+	}
+	
 	private FuelPriceMO mapDOtoMO(FuelPriceMO fuelPriceMO, FuelPrice fuelPrice) {
 		fuelPriceMO.setId(fuelPrice.getId());
 		fuelPriceMO.setPrice(fuelPrice.getPrice());
 		FuelType fuelType = new FuelType();
 		fuelType.setId(fuelPrice.getFuel_type_id());
-		fuelPriceMO.setFuel_type(fuelType);
+		fuelPriceMO.setFuel_type(mapDOtoMO(fuelType, new FuelTypeMO()));
 		try {
 			System.out.println("date of sale from db format ::: " + fuelPrice.getDate_of_sale());
 			fuelPriceMO.setDate_of_sale(DateAndTimeUtility.changeDateFormat(fuelPrice.getDate_of_sale().toString(),
