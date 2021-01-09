@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.exception.UniqueConstraintException;
 import com.mayavan.fuelman.repo.model.FuelPriceMO;
+import com.mayavan.fuelman.repo.model.FuelTypeMO;
 
 @Service
 public interface FuelService {
 
+	public FuelTypeMO getFuelTypeById(int fueltypeId) throws ResourceNotFoundException;
+	
 	public FuelPriceMO createFuelPrice(FuelPriceMO fuelPriceMO)throws UniqueConstraintException;
 	
 	public List<FuelPriceMO> getAllFuelPrices();
