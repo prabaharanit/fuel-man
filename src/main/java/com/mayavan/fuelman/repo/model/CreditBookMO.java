@@ -1,7 +1,5 @@
 package com.mayavan.fuelman.repo.model;
 
-import java.sql.Timestamp;
-
 import javax.persistence.Column;
 
 public class CreditBookMO {
@@ -11,16 +9,17 @@ public class CreditBookMO {
 	private FuelPriceMO fuelPriceMO;
 	private double litre_sale_volume;
 	private double amount_of_sale;
-	private Timestamp dttm_of_sale;
+	private String dttm_of_sale;
 	private int is_deleted;
-	private int is_paid;
-	private Timestamp created_dttm;
-	private Timestamp modified_dttm;
+	private int is_paid = 0;
+	private String created_dttm;
+	private String modified_dttm;
+	private String comments;
 	
 	public CreditBookMO() {
 	}
 	
-	public CreditBookMO(VehicleMO vehicleMO, FuelPriceMO fuelPriceMO, double litre_sale_volumne, double amount_of_sale, int is_deleted, int is_paid, Timestamp dttm_of_sale, Timestamp created_dttm, Timestamp modified_dttm) {
+	public CreditBookMO(VehicleMO vehicleMO, FuelPriceMO fuelPriceMO, double litre_sale_volumne, double amount_of_sale, int is_deleted, int is_paid, String dttm_of_sale, String created_dttm, String modified_dttm) {
 		this.vehicleMO = vehicleMO;
 		this.fuelPriceMO = fuelPriceMO;
 		this.litre_sale_volume = litre_sale_volumne;
@@ -69,10 +68,10 @@ public class CreditBookMO {
 		this.amount_of_sale = amount_of_sale;
 	}
 	
-	public Timestamp getDttm_of_sale() {
+	public String getDttm_of_sale() {
 		return dttm_of_sale;
 	}
-	public void setDttm_of_sale(Timestamp dttm_of_sale) {
+	public void setDttm_of_sale(String dttm_of_sale) {
 		this.dttm_of_sale = dttm_of_sale;
 	}
 
@@ -91,17 +90,27 @@ public class CreditBookMO {
 		this.is_paid = is_paid;
 	}
 
-	public Timestamp getCreated_dttm() {
+	public String getCreated_dttm() {
 		return created_dttm;
 	}
-	public void setCreated_dttm(Timestamp created_dttm) {
+	public void setCreated_dttm(String created_dttm) {
 		this.created_dttm = created_dttm;
 	}
 
-	public Timestamp getModified_dttm() {
+	public String getModified_dttm() {
 		return modified_dttm;
 	}
-	public void setModified_dttm(Timestamp modified_dttm) {
+	public void setModified_dttm(String modified_dttm) {
 		this.modified_dttm = modified_dttm;
 	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+	
+	
 }
