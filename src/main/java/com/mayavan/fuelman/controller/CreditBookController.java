@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
-import com.mayavan.fuelman.exception.UniqueConstraintException;
 import com.mayavan.fuelman.repo.model.CreditBookMO;
 import com.mayavan.fuelman.service.CreditBookService;
 
@@ -27,24 +26,31 @@ import com.mayavan.fuelman.service.CreditBookService;
 @RequestMapping("/api/v1")
 public class CreditBookController {
 
-	Logger logger = LoggerFactory.getLogger(CreditBookController.class);
+	Logger log = LoggerFactory.getLogger(CreditBookController.class);
 
 	@Autowired
 	private CreditBookService creditBookServiceImpl;
 
 	// credit book
-
 	@PostMapping("/creditEntry")
-	public CreditBookMO createCreditBook(@Valid @RequestBody CreditBookMO creditBookMO)
-			throws UniqueConstraintException {
+	public CreditBookMO createCreditBook(@Valid @RequestBody CreditBookMO creditBookMO) throws Exception {
+		System.out
+				.println("***********************************" + creditBookMO.getFuelPriceMO().getFuel_type().getId());
+		log.info("inisid create credit book");
 		creditBookMO = creditBookServiceImpl.createCreditBook(creditBookMO);
 		return creditBookMO;
 	}
 
 	@GetMapping("/creditEntries")
-	public List<CreditBookMO> getAllCreditBook() throws ResourceNotFoundException {
+	public List<CreditBookMO> getAllCreditBook() throws Exception {
 		System.out.println("inside get all credit book");
-		return creditBookServiceImpl.getAllCreditBook();
+		List<CreditBookMO> creditBookMOs = null;
+		try {
+			creditBookMOs = creditBookServiceImpl.getAllCreditBook();
+		} catch (Exception exp) {
+			exp.printStackTrace();
+		}
+		return creditBookMOs;
 	}
 
 	@GetMapping("/creditEntry/{id}")
@@ -55,11 +61,15 @@ public class CreditBookController {
 	}
 
 	@PutMapping("/creditEntry/{id}")
-	public ResponseEntity<CreditBookMO> updateVehicle(@PathVariable(value = "id") int vehicleId,
-			@Valid @RequestBody CreditBookMO creditBookMO) throws ResourceNotFoundException {
-		creditBookServiceImpl.updateCreditBook(creditBookMO);
+	public ResponseEntity<CreditBookMO> updateCreditEntry(@PathVariable(value = "id") int creditBookId,
+			@Valid @RequestBody CreditBookMO creditBookMO) throws Exception {
+		try {
+			creditBookServiceImpl.updateCreditBook(creditBookMO);
+		} catch (Exception exp) {
+			exp.printStackTrace();
+			throw new Exception("Error while updating creidt entry for id = "+ creditBookMO.getId(), exp);
+		}
 		return ResponseEntity.ok(creditBookMO);
 	}
-	// credit book
 
 }
