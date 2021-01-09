@@ -18,11 +18,13 @@ public class CreditBook {
 	private int fuel_type_id;
 	private double litre_sale_volume;
 	private double amount_of_sale;
+	private double fuelPrice;
 	private Timestamp dttm_of_sale;
 	private int is_deleted;
 	private int is_paid;
 	private Timestamp created_dttm;
 	private Timestamp modified_dttm;
+	private String comments;
 	
 	public CreditBook() {
 	}
@@ -56,7 +58,7 @@ public class CreditBook {
 		this.vh_id = vh_id;
 	}
 	
-	@Column(name = "fuel_tye_id", nullable = false)
+	@Column(name = "fuel_type_id", nullable = false)
 	public int getFuel_type_id() {
 		return fuel_type_id;
 	}
@@ -80,6 +82,15 @@ public class CreditBook {
 		this.amount_of_sale = amount_of_sale;
 	}
 	
+	@Column(name = "fuel_sale_price", nullable = false)
+	public double getFuelPrice() {
+		return fuelPrice;
+	}
+
+	public void setFuelPrice(double fuelPrice) {
+		this.fuelPrice = fuelPrice;
+	}
+
 	@Column(name = "dttm_of_sale", nullable = false)
 	public Timestamp getDttm_of_sale() {
 		return dttm_of_sale;
@@ -119,4 +130,15 @@ public class CreditBook {
 	public void setModified_dttm(Timestamp modified_dttm) {
 		this.modified_dttm = modified_dttm;
 	}
+
+	@Column(name = "comments", nullable = true)
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+	
+	
 }
