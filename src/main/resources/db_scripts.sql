@@ -339,3 +339,14 @@ CREATE TRIGGER set_modified_dttm
     FOR EACH ROW
     EXECUTE PROCEDURE public.set_modified_dttm();
     
+ALTER TABLE credit_transaction 
+DROP COLUMN credit_book_id;
+
+ALTER TABLE credit_transaction 
+ADD COLUMN debit double precision;
+
+ALTER TABLE credit_transaction 
+rename COLUMN payment_received to credit;
+
+ALTER TABLE credit_transaction 
+rename COLUMN date_received to credited_dttm;
