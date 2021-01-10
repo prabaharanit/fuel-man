@@ -16,8 +16,11 @@ import org.springframework.stereotype.Service;
 
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.repo.CreditBookRepository;
+import com.mayavan.fuelman.repo.CreditTransactionRepository;
 import com.mayavan.fuelman.repo.model.CreditBook;
 import com.mayavan.fuelman.repo.model.CreditBookMO;
+import com.mayavan.fuelman.repo.model.CreditTransaction;
+import com.mayavan.fuelman.repo.model.CreditTransactionMO;
 import com.mayavan.fuelman.repo.model.FuelPriceMO;
 import com.mayavan.fuelman.util.DateAndTimeUtility;
 import com.mayavan.fuelman.util.DateAndTimeUtility.DATEFORMAT;
@@ -30,6 +33,9 @@ public class CreditBookServiceImpl implements CreditBookService {
 	@Autowired
 	public CreditBookRepository creditBookRepository;
 
+	@Autowired
+	public CreditTransactionRepository creditTransactionRepo;
+	
 	@Autowired
 	public VehicleService vehicleServiceImpl;
 
@@ -88,7 +94,7 @@ public class CreditBookServiceImpl implements CreditBookService {
 		creditBookRepository.save(mapMOtoDO(creditBookMO, creditBook));
 		return creditBookMO;
 	}
-
+	
 	private CreditBookMO mapDOtoMO(CreditBook creditBook, CreditBookMO creditBookMO) {
 		creditBookMO.setId(creditBook.getId());
 		creditBookMO.setLitre_sale_volume(creditBook.getLitre_sale_volume());
@@ -142,5 +148,33 @@ public class CreditBookServiceImpl implements CreditBookService {
 		creditBook.setIs_paid(creditBookMO.getIs_paid());
 		creditBook.setComments(creditBookMO.getComments());
 		return creditBook;
+	}
+
+	@Override
+	public CreditTransactionMO createCreditTransaction(CreditTransactionMO creditTransactionMO) throws Exception {
+		try {
+			creditTransactionRepo.save(mapMOtoDO(creditTransactionMO, new CreditTransaction()));
+		} catch (DataIntegrityViolationException pExp) {
+			throw new Exception(pExp.getRootCause().getLocalizedMessage());
+		} catch (Exception exp) {
+			logger.error("Error while creating new credit transaction", exp);
+			throw new Exception("Error while creating new credit transaction", exp);
+		}
+		return creditTransactionMO;
+	}
+	
+	private CreditTransaction mapMOtoDO(CreditTransactionMO creditTransactionMO, CreditTransaction creditTransaction) {
+		creditTransaction.setId(creditTransactionMO.getId());
+		creditTransaction.setCredit(creditTransactionMO.getCredit());
+		creditTransaction.setDebit(creditTransactionMO.getDebit());
+		creditTransaction.setIs_deleted(creditTransactionMO.getIs_deleted());
+		try {
+			creditTransaction.setCredited_dttm(DateAndTimeUtility.convertStringToTimestamp(creditTransactionMO.getCredited_dttm(),
+					DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return creditTransaction;
 	}
 }
