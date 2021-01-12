@@ -25,6 +25,7 @@ import com.mayavan.fuelman.exception.UniqueConstraintException;
 import com.mayavan.fuelman.repo.VehicleTypeRepository;
 import com.mayavan.fuelman.repo.model.VehicleMO;
 import com.mayavan.fuelman.repo.model.VehicleType;
+import com.mayavan.fuelman.repo.model.VehicleTypeMO;
 import com.mayavan.fuelman.service.VehicleService;
 
 @CrossOrigin(origins = "http://localhost:8081")
@@ -57,7 +58,8 @@ public class VehicleController {
 	}
 
 	@GetMapping("/vehicle/{id}")
-	public ResponseEntity<VehicleMO> getVehicleById(@PathVariable(value = "id") int vehicleTypeId) throws ResourceNotFoundException {
+	public ResponseEntity<VehicleMO> getVehicleById(@PathVariable(value = "id") int vehicleTypeId)
+			throws ResourceNotFoundException {
 		VehicleMO vehicleMO = vehicleServiceImpl.getVehicleById(vehicleTypeId);
 		return ResponseEntity.ok().body(vehicleMO);
 	}
@@ -73,9 +75,9 @@ public class VehicleController {
 	// vehicle type
 
 	@GetMapping("/vehicleTypes")
-	public List<VehicleType> getAllVehicleType() {
+	public List<VehicleTypeMO> getAllVehicleType() {
 		System.out.println("inside get all vehilce types");
-		return vehicleTypeRepository.findAll();
+		return vehicleServiceImpl.getAllVehicleType();
 	}
 
 	@GetMapping("/vehicleType/{id}")

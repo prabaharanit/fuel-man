@@ -20,6 +20,4 @@ public interface FuelPriceRepository extends JpaRepository<FuelPrice, Integer> {
 	@Query(" FROM daily_fuel_price t where t.from_dttm <= ?1 and t.to_dttm >= ?1 and fuel_type_id = ?2")
 	FuelPrice findFuelPriceMatchingDateTime(Date dateTime, int fuel_type_id);
 	
-
-
 }

@@ -10,7 +10,7 @@ public class VehicleMO {
 
 	private int id;
 	private VehicleType vhType;
-	private VehicleOwner vhOwner;
+	private VehicleOwnerMO vhOwner;
 	private String numberPlate;
 	private Timestamp created_dttm;
 	private Timestamp modified_dttm;
@@ -20,7 +20,7 @@ public class VehicleMO {
 
 	}
 
-	public VehicleMO(VehicleType vhType, VehicleOwner vhOwner, String numberPlate, Timestamp created_dttm, Timestamp modified_dttm, int is_deleted) {
+	public VehicleMO(VehicleType vhType, VehicleOwnerMO vhOwner, String numberPlate, Timestamp created_dttm, Timestamp modified_dttm, int is_deleted) {
 		this.vhType = vhType;
 		this.vhOwner = vhOwner;
 		this.numberPlate = numberPlate;
@@ -48,11 +48,11 @@ public class VehicleMO {
 		this.vhType = vhType;
 	}
 
-	public VehicleOwner getVhOwner() {
+	public VehicleOwnerMO getVhOwner() {
 		return vhOwner;
 	}
 
-	public void setVhOwner(VehicleOwner vhOwner) {
+	public void setVhOwner(VehicleOwnerMO vhOwner) {
 		this.vhOwner = vhOwner;
 	}
 

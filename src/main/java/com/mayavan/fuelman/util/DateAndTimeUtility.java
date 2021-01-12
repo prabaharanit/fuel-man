@@ -246,7 +246,7 @@ public class DateAndTimeUtility {
 
 	public enum DATEFORMAT {
 		DAY_DATE_MONTH_YEAR("E dd MMM yyyy"), DD_MMM_YY("dd-MMM-yyyy"), DB_FORMAT_YYYY_DD_MM("yyyy-MM-dd"), SYSTEM_DATE_FORMAT("EEE MMM dd HH:mm:ss z yyyy"), CLIENT_FORMAT_DD_MM_YYYY("dd.MM.yyyy"), DB_DATE_TIME_FORMAT(
-				"yyyy-MM-dd H:mm:ss"), CLIENT_DATE_TIME_FORMAT("dd.MM.yyyy h:mm"), CLIENT_DATE_TIME_FORMAT_DTTM_OF_SALE("dd MM yyyy H:mm:ss");
+				"yyyy-MM-dd H:mm:ss"), CLIENT_DATE_TIME_FORMAT("dd.MM.yyyy h:mm:ss"), CLIENT_DATE_TIME_FORMAT_DTTM_OF_SALE("dd MM yyyy H:mm:ss");
 
 		private String dateFormat;
 

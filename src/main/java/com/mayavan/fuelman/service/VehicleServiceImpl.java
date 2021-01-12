@@ -1,5 +1,6 @@
 package com.mayavan.fuelman.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +13,15 @@ import org.springframework.stereotype.Service;
 
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.exception.UniqueConstraintException;
-import com.mayavan.fuelman.repo.VehicleOwnerRepository;
 import com.mayavan.fuelman.repo.VehicleRepository;
 import com.mayavan.fuelman.repo.VehicleTypeRepository;
 import com.mayavan.fuelman.repo.model.Vehicle;
 import com.mayavan.fuelman.repo.model.VehicleMO;
-import com.mayavan.fuelman.repo.model.VehicleOwner;
+import com.mayavan.fuelman.repo.model.VehicleOwnerMO;
 import com.mayavan.fuelman.repo.model.VehicleType;
+import com.mayavan.fuelman.repo.model.VehicleTypeMO;
+import com.mayavan.fuelman.util.DateAndTimeUtility;
+import com.mayavan.fuelman.util.DateAndTimeUtility.DATEFORMAT;
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
@@ -27,7 +30,7 @@ public class VehicleServiceImpl implements VehicleService {
 	private VehicleRepository vehicleRepository;
 
 	@Autowired
-	private VehicleOwnerRepository vehicleOwnerRepository;
+	private VehicleOwnerServiceImpl vehicleOwnerServiceImpl;
 
 	@Autowired
 	private VehicleTypeRepository vehicleTypeRepository;
@@ -43,7 +46,7 @@ public class VehicleServiceImpl implements VehicleService {
 		} catch (DataIntegrityViolationException dIExp) {
 			logger.error("vehilce number unique key constraint", dIExp);
 			throw new UniqueConstraintException("Vehicle Number alreay exists");
-		}  catch (Exception exp){
+		} catch (Exception exp) {
 			System.out.println(exp);
 			logger.error("Error while creating vehicle", exp);
 		}
@@ -57,14 +60,14 @@ public class VehicleServiceImpl implements VehicleService {
 			VehicleMO vehicleMO = mapDOtoMO(vehicle, new VehicleMO());
 			vehicleMOs.add(vehicleMO);
 		});
-		
+
 		return vehicleMOs;
 	}
 
 	@Override
 	public VehicleMO getVehicleById(int id) throws ResourceNotFoundException {
-		Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(
-				() -> new ResourceNotFoundException("Vehicle not found for this id :: " + id));
+		Vehicle vehicle = vehicleRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Vehicle not found for this id :: " + id));
 		VehicleMO vehicleMO = mapDOtoMO(vehicle, new VehicleMO());
 		return vehicleMO;
 	}
@@ -76,7 +79,7 @@ public class VehicleServiceImpl implements VehicleService {
 	}
 
 	@Override
-	public VehicleMO updateVehicle(VehicleMO vehicleMO)  throws UniqueConstraintException{
+	public VehicleMO updateVehicle(VehicleMO vehicleMO) throws UniqueConstraintException {
 		Vehicle vehicle = null;
 		try {
 			vehicle = vehicleRepository.findById(vehicleMO.getId()).orElseThrow(
@@ -84,7 +87,7 @@ public class VehicleServiceImpl implements VehicleService {
 
 			vehicle = mapMOtoDO(vehicleMO, vehicle);
 			vehicleRepository.save(vehicle);
-		}  catch (DataIntegrityViolationException dIExp) {
+		} catch (DataIntegrityViolationException dIExp) {
 			logger.error("vehilce number unique key constraint", dIExp);
 			throw new UniqueConstraintException("Vehicle Number alreay exists");
 		} catch (Exception exp) {
@@ -105,33 +108,59 @@ public class VehicleServiceImpl implements VehicleService {
 	private VehicleMO mapDOtoMO(Vehicle vehicle, VehicleMO vehicleMO) {
 		vehicleMO.setId(vehicle.getId());
 		vehicleMO.setNumberPlate(vehicle.getNumberPlate());
-		/*
-		 * VehicleType vhType = new VehicleType(); vhType.setId(vehicle.getVhTypeId());
-		 * vehicleMO.setVhType(vhType);
-		 */
-		//VehicleOwner vhOwner = new VehicleOwner();
-		//vhOwner.setId(vehicle.getVhOwnerId());
-		//vehicleMO.setVhOwner(vhOwner);
-		
 		try {
-			VehicleOwner vhOwner = vehicleOwnerRepository.findById(vehicle.getVhOwnerId()).orElseThrow(
-					() -> new ResourceNotFoundException("Vehicle Owner not found for  id :: " + vehicle.getVhOwnerId()));
+			VehicleOwnerMO vhOwner = vehicleOwnerServiceImpl.getVehicleOwnerById(vehicle.getVhOwnerId());
 			vehicleMO.setVhOwner(vhOwner);
 		} catch (ResourceNotFoundException e1) {
 			new ResourceNotFoundException("Vehicle Owner not found for id :: " + vehicle.getVhOwnerId());
 		}
 		try {
-			VehicleType vhType = vehicleTypeRepository.findById(vehicle.getVhTypeId()).orElseThrow(() -> 
-			new ResourceNotFoundException("Vehicle type not found for  id :: " + vehicle.getVhTypeId()));
+			VehicleType vhType = vehicleTypeRepository.findById(vehicle.getVhTypeId()).orElseThrow(
+					() -> new ResourceNotFoundException("Vehicle type not found for  id :: " + vehicle.getVhTypeId()));
 			vehicleMO.setVhType(vhType);
-		}catch(ResourceNotFoundException rExp){
+		} catch (ResourceNotFoundException rExp) {
 			new ResourceNotFoundException("Vehicle type not found for id :: " + vehicle.getVhTypeId());
 		}
-		
+
 		vehicleMO.setIs_deleted(vehicle.getIs_deleted());
 		vehicleMO.setCreated_dttm(vehicle.getCreated_dttm());
 		vehicleMO.setModified_dttm(vehicle.getModified_dttm());
 		return vehicleMO;
+	}
+
+	private VehicleTypeMO mapDOtoMO(VehicleType vehicleType, VehicleTypeMO vehicleTypeMO) {
+		vehicleTypeMO.setId(vehicleType.getId());
+		vehicleTypeMO.setType(vehicleType.getType());
+		vehicleTypeMO.setName(vehicleType.getName());
+		vehicleTypeMO.setIs_deleted(vehicleType.getIs_deleted());
+		try {
+			if (vehicleType.getCreated_dttm() != null)
+			vehicleTypeMO.setCreated_dttm(DateAndTimeUtility.changeDateFormat(vehicleType.getCreated_dttm().toString(),
+					DATEFORMAT.DB_DATE_TIME_FORMAT, DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
+			if (vehicleType.getModified_dttm() != null)
+			vehicleTypeMO
+					.setModified_dttm(DateAndTimeUtility.changeDateFormat(vehicleType.getModified_dttm().toString(),
+							DATEFORMAT.DB_DATE_TIME_FORMAT, DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
+		} catch (ParseException parseExp) {
+			parseExp.printStackTrace();
+			logger.error("Error while mapping vehicle type do to mo", parseExp);
+		}
+		return vehicleTypeMO;
+	}
+
+	@Override
+	public List<VehicleTypeMO> getAllVehicleType() {
+		List<VehicleTypeMO> vehicleTypeMOLst = new ArrayList<VehicleTypeMO>();
+		try {
+			vehicleTypeRepository.findAll().forEach(vehicleType -> {
+				vehicleTypeMOLst.add(mapDOtoMO(vehicleType, new VehicleTypeMO()));
+			});
+		} catch (Exception exp) {
+			exp.printStackTrace();
+			logger.error("Error while mapping vehicle type do to mo", exp);
+		}
+
+		return vehicleTypeMOLst;
 	}
 
 }

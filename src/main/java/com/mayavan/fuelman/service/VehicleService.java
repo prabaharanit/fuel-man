@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.exception.UniqueConstraintException;
 import com.mayavan.fuelman.repo.model.VehicleMO;
+import com.mayavan.fuelman.repo.model.VehicleTypeMO;
 
 @Service
 public interface VehicleService {
@@ -21,5 +22,7 @@ public interface VehicleService {
 	public Map<String, Boolean> deleteVehicle(int Id);
 	
 	public VehicleMO updateVehicle(VehicleMO vehicleMO)throws UniqueConstraintException;
+	
+	public List<VehicleTypeMO> getAllVehicleType();
 
 }

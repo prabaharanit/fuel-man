@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.repo.model.CreditBookMO;
+import com.mayavan.fuelman.repo.model.CreditTransactionMO;
 import com.mayavan.fuelman.service.CreditBookService;
 
 @CrossOrigin(origins = "http://localhost:8081")
@@ -71,5 +72,23 @@ public class CreditBookController {
 		}
 		return ResponseEntity.ok(creditBookMO);
 	}
+	
+	@PostMapping("/creditTransaction")
+	public CreditTransactionMO createCreditTransaction(@Valid @RequestBody CreditTransactionMO creditTransactionMO) throws Exception {
+		log.info("inisid create transaction book");
+		creditTransactionMO = creditBookServiceImpl.createCreditTransaction(creditTransactionMO);
+		return creditTransactionMO;
+	}
 
+	@GetMapping("/creditTransactions")
+	public List<CreditTransactionMO> getAllCreditTransactions() throws Exception{
+		List<CreditTransactionMO> creditTransactionMOs = null;
+		try {
+			creditTransactionMOs = creditBookServiceImpl.getAllCreditTransaction();
+		} catch (Exception exp) {
+			exp.printStackTrace();
+			//throw new Exception("Error while updating creidt entry for id = "+ creditBookMO.getId(), exp);
+		}
+		return creditTransactionMOs;
+	}
 }

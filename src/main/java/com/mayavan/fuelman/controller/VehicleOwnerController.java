@@ -18,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
-import com.mayavan.fuelman.repo.VehicleOwnerRepository;
-import com.mayavan.fuelman.repo.model.VehicleOwner;
+import com.mayavan.fuelman.exception.UniqueConstraintException;
+import com.mayavan.fuelman.repo.model.VehicleOwnerMO;
+import com.mayavan.fuelman.service.VehicleOwnerServiceImpl;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -29,48 +30,31 @@ public class VehicleOwnerController {
 	Logger logger = LoggerFactory.getLogger(VehicleOwnerController.class);
 
 	@Autowired
-	private VehicleOwnerRepository vehicleOwnerRepository;
+	private VehicleOwnerServiceImpl vehicleOwnerServiceImpl;
 
 	
 	@GetMapping("/vehicleowners")
-	public List<VehicleOwner> getAllVehicleOwners() {
+	public List<VehicleOwnerMO> getAllVehicleOwners() {
 		System.out.println("inside get all vehicle owner");
-		return vehicleOwnerRepository.findAll();
+		return vehicleOwnerServiceImpl.getAllVehicleOwner();
 	}
 	
 	@GetMapping("/vehicleOwner/{id}")
-	public ResponseEntity<VehicleOwner> getVehicleOwnerById(@PathVariable(value = "id") int vehicleOwnerId)
+	public ResponseEntity<VehicleOwnerMO> getVehicleOwnerById(@PathVariable(value = "id") int vehicleOwnerId)
 			throws ResourceNotFoundException {
-		VehicleOwner vehilceOwner = vehicleOwnerRepository.findById(vehicleOwnerId)
-				.orElseThrow(() -> new ResourceNotFoundException("Vehicle Owner not found for this id :: " + vehicleOwnerId));
-		return ResponseEntity.ok().body(vehilceOwner);
+		return ResponseEntity.ok().body(vehicleOwnerServiceImpl.getVehicleOwnerById(vehicleOwnerId));
 	}
 
 	@PostMapping("/vehicleowner")
-	public VehicleOwner createVehicleOwner(@Valid @RequestBody VehicleOwner vehicleOwner) {
-		try {
-			vehicleOwner = vehicleOwnerRepository.save(vehicleOwner);
-		} catch (Exception exp) {
-			logger.info("error while saving vehicle owner details", exp);
-		}
-
-		return vehicleOwner;
+	public VehicleOwnerMO createVehicleOwner(@Valid @RequestBody VehicleOwnerMO vehicleOwnerMO) throws UniqueConstraintException {
+		vehicleOwnerServiceImpl.createVehicleOwner(vehicleOwnerMO);
+		return vehicleOwnerMO;
 	}
 	
 	
 	@PutMapping("/vehicleOwner/{id}")
-	public ResponseEntity<VehicleOwner> updateFuelType(@PathVariable(value = "id") int vehicleOwnerId,
-			@Valid @RequestBody VehicleOwner vehicleOwnerDetails) throws ResourceNotFoundException {
-		VehicleOwner vehicleOwner = vehicleOwnerRepository.findById(vehicleOwnerId)
-				.orElseThrow(() -> new ResourceNotFoundException("Vehicle Owner not found for this id :: " + vehicleOwnerId));
-
-		vehicleOwner.setName(vehicleOwnerDetails.getName());
-		vehicleOwner.setMobile_no(vehicleOwnerDetails.getMobile_no());
-		vehicleOwner.setTransport_name(vehicleOwnerDetails.getTransport_name());
-		vehicleOwner.setIs_deleted(vehicleOwnerDetails.getIs_deleted());
-		vehicleOwner.setCreated_dttm(vehicleOwnerDetails.getCreated_dttm());
-		vehicleOwner.setModified_dttm(vehicleOwnerDetails.getModified_dttm());
-		final VehicleOwner updatedvehicleOwner = vehicleOwnerRepository.save(vehicleOwner);
-		return ResponseEntity.ok(updatedvehicleOwner);
+	public ResponseEntity<VehicleOwnerMO> updateVehicleOwner(@PathVariable(value = "id") int vehicleOwnerId,
+			@Valid @RequestBody VehicleOwnerMO vehicleOwnerDetails) throws ResourceNotFoundException, UniqueConstraintException {
+		return ResponseEntity.ok(vehicleOwnerServiceImpl.updateVehicleOwner(vehicleOwnerDetails));
 	}
 }
