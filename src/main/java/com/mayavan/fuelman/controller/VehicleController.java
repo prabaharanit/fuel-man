@@ -47,7 +47,11 @@ public class VehicleController {
 	public VehicleMO createVehicle(@Valid @RequestBody VehicleMO vehicleMO) throws UniqueConstraintException {
 		System.out.println("inside add vehicle" + vehicleMO.getNumberPlate() + vehicleMO.getVhOwner().getName()
 				+ vehicleMO.getVhType().getType());
-		vehicleMO = vehicleServiceImpl.createVehicle(vehicleMO);
+		try {
+			vehicleMO = vehicleServiceImpl.createVehicle(vehicleMO);
+		} catch(Exception exp){
+			
+		}
 		return vehicleMO;
 	}
 

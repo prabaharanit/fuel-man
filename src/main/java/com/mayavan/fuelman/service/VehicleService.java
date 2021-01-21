@@ -24,5 +24,7 @@ public interface VehicleService {
 	public VehicleMO updateVehicle(VehicleMO vehicleMO)throws UniqueConstraintException;
 	
 	public List<VehicleTypeMO> getAllVehicleType();
+	
+	public List<Integer> getAllVehicleByVhOwner(int vhOwnerId) throws Exception;
 
 }

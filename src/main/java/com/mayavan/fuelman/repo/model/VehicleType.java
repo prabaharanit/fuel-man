@@ -1,7 +1,5 @@
 package com.mayavan.fuelman.repo.model;
 
-import java.sql.Timestamp;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,15 +14,15 @@ public class VehicleType {
 	private int id;
 	private String type;
 	private String name;
-	private Timestamp created_dttm;
-	private Timestamp modified_dttm;
+	private String created_dttm;
+	private String modified_dttm;
 	private int is_deleted;
 
 	public VehicleType() {
 
 	}
 
-	public VehicleType(String type, String name, Timestamp created_dttm, Timestamp modified_dttm, int is_deleted) {
+	public VehicleType(String type, String name, String created_dttm, String modified_dttm, int is_deleted) {
 		this.type = type;
 		this.name = name;
 		this.created_dttm = created_dttm;
@@ -62,20 +60,20 @@ public class VehicleType {
 	}
 
 	@Column(name = "created_dttm", nullable = true)
-	public Timestamp getCreated_dttm() {
+	public String getCreated_dttm() {
 		return created_dttm;
 	}
 
-	public void setCreated_dttm(Timestamp created_dttm) {
+	public void setCreated_dttm(String created_dttm) {
 		this.created_dttm = created_dttm;
 	}
 
 	@Column(name = "modified_dttm", nullable = true)
-	public Timestamp getModified_dttm() {
+	public String getModified_dttm() {
 		return modified_dttm;
 	}
 
-	public void setModified_dttm(Timestamp modified_dttm) {
+	public void setModified_dttm(String modified_dttm) {
 		this.modified_dttm = modified_dttm;
 	}
 

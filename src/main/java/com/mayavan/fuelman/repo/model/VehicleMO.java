@@ -1,7 +1,5 @@
 package com.mayavan.fuelman.repo.model;
 
-import java.sql.Timestamp;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,15 +10,15 @@ public class VehicleMO {
 	private VehicleType vhType;
 	private VehicleOwnerMO vhOwner;
 	private String numberPlate;
-	private Timestamp created_dttm;
-	private Timestamp modified_dttm;
+	private String created_dttm;
+	private String modified_dttm;
 	private int is_deleted;
 
 	public VehicleMO() {
 
 	}
 
-	public VehicleMO(VehicleType vhType, VehicleOwnerMO vhOwner, String numberPlate, Timestamp created_dttm, Timestamp modified_dttm, int is_deleted) {
+	public VehicleMO(VehicleType vhType, VehicleOwnerMO vhOwner, String numberPlate, String created_dttm, String modified_dttm, int is_deleted) {
 		this.vhType = vhType;
 		this.vhOwner = vhOwner;
 		this.numberPlate = numberPlate;
@@ -64,19 +62,19 @@ public class VehicleMO {
 		this.numberPlate = numberPlate;
 	}
 
-	public Timestamp getCreated_dttm() {
+	public String getCreated_dttm() {
 		return created_dttm;
 	}
 
-	public void setCreated_dttm(Timestamp created_dttm) {
+	public void setCreated_dttm(String created_dttm) {
 		this.created_dttm = created_dttm;
 	}
 
-	public Timestamp getModified_dttm() {
+	public String getModified_dttm() {
 		return modified_dttm;
 	}
 
-	public void setModified_dttm(Timestamp modified_dttm) {
+	public void setModified_dttm(String modified_dttm) {
 		this.modified_dttm = modified_dttm;
 	}
 

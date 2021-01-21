@@ -65,6 +65,16 @@ public class VehicleServiceImpl implements VehicleService {
 	}
 
 	@Override
+	public List<Integer> getAllVehicleByVhOwner(int vhOwnerId) {
+		List<Integer> vehicleIds = new ArrayList<Integer>();
+		vehicleRepository.findAllVehilceByVhOwner(vhOwnerId).forEach(vehicle -> {
+			
+			vehicleIds.add(vehicle.getId());
+		});
+		return vehicleIds;
+	}
+	
+	@Override
 	public VehicleMO getVehicleById(int id) throws ResourceNotFoundException {
 		Vehicle vehicle = vehicleRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Vehicle not found for this id :: " + id));
@@ -123,8 +133,15 @@ public class VehicleServiceImpl implements VehicleService {
 		}
 
 		vehicleMO.setIs_deleted(vehicle.getIs_deleted());
-		vehicleMO.setCreated_dttm(vehicle.getCreated_dttm());
-		vehicleMO.setModified_dttm(vehicle.getModified_dttm());
+		try {
+			if(vehicle.getCreated_dttm() != null)
+			vehicleMO.setCreated_dttm(DateAndTimeUtility.changeDateFormat(vehicle.getCreated_dttm().toString(), DATEFORMAT.DB_DATE_TIME_FORMAT, DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
+			if(vehicle.getModified_dttm() != null)
+			vehicleMO.setModified_dttm(DateAndTimeUtility.changeDateFormat(vehicle.getModified_dttm().toString(), DATEFORMAT.DB_DATE_TIME_FORMAT, DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return vehicleMO;
 	}
 

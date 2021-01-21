@@ -22,7 +22,6 @@ import com.mayavan.fuelman.repo.model.CreditBookMO;
 import com.mayavan.fuelman.repo.model.CreditTransaction;
 import com.mayavan.fuelman.repo.model.CreditTransactionMO;
 import com.mayavan.fuelman.repo.model.FuelPriceMO;
-import com.mayavan.fuelman.repo.model.VehicleOwnerMO;
 import com.mayavan.fuelman.util.DateAndTimeUtility;
 import com.mayavan.fuelman.util.DateAndTimeUtility.DATEFORMAT;
 
@@ -49,6 +48,7 @@ public class CreditBookServiceImpl implements CreditBookService {
 	@Override
 	public CreditBookMO createCreditBook(CreditBookMO creditBookMO) throws Exception {
 		try {
+			updateDebitTransaction(creditBookMO);
 			creditBookRepository.save(mapMOtoDO(creditBookMO, new CreditBook()));
 		} catch (DataIntegrityViolationException pExp) {
 			throw new Exception(pExp.getRootCause().getLocalizedMessage());
@@ -57,6 +57,25 @@ public class CreditBookServiceImpl implements CreditBookService {
 			throw new Exception("Error while creating new credit entry", exp);
 		}
 		return creditBookMO;
+	}
+
+	private void updateDebitTransaction(CreditBookMO creditBookMO) throws Exception {
+		CreditTransactionMO creditTransMO = getCreditTransByVhOwnerId(creditBookMO.getVehicleMO().getVhOwner().getId());
+		if (creditTransMO == null) {
+			creditTransMO = new CreditTransactionMO();
+			creditTransMO.setVhOwner(creditBookMO.getVehicleMO().getVhOwner());
+			creditTransMO.setDebit(creditBookMO.getAmount_of_sale());
+			createCreditTransaction(creditTransMO);
+		} else {
+			creditTransMO.setVhOwner(creditBookMO.getVehicleMO().getVhOwner());
+			double compareDebit = creditBookMO.getAmount_of_sale() + creditTransMO.getDebit();
+			if (creditTransMO.getCredit() >= compareDebit) {
+				creditTransMO.addDebit(creditBookMO.getAmount_of_sale());
+				updateCreditTransaction(creditTransMO);
+			} else {
+				createCreditTransaction(creditTransMO);
+			}
+		}
 	}
 
 	@Override
@@ -85,6 +104,17 @@ public class CreditBookServiceImpl implements CreditBookService {
 	}
 
 	@Override
+	public List<CreditBookMO> getCreditEntriesByVhOwnerId(int vhOwnerId) throws Exception {
+		List<CreditBookMO> creditBookMOs = new ArrayList<CreditBookMO>();
+		List<Integer> vehicleIds = vehicleServiceImpl.getAllVehicleByVhOwner(vhOwnerId);
+		creditBookRepository.findByVehicleIdIn(vehicleIds).forEach(creditBook -> {
+			CreditBookMO creditBookMO = mapDOtoMO(creditBook, new CreditBookMO());
+			creditBookMOs.add(creditBookMO);
+		});
+		return creditBookMOs;
+	}
+
+	@Override
 	public CreditBookMO getCreditBookForId(Integer Id) throws ResourceNotFoundException {
 		CreditBook creditBook = creditBookRepository.findById(Id)
 				.orElseThrow(() -> new ResourceNotFoundException("No credit book found for this id :: " + Id));
@@ -93,23 +123,37 @@ public class CreditBookServiceImpl implements CreditBookService {
 
 	@Override
 	public CreditBookMO updateCreditBook(CreditBookMO creditBookMO) throws Exception {
+		updateDebitTransaction(creditBookMO);
 		CreditBook creditBook = creditBookRepository.findById(creditBookMO.getId()).orElseThrow(
 				() -> new ResourceNotFoundException("No credit book found for this id ::" + creditBookMO.getId()));
 		creditBookRepository.save(mapMOtoDO(creditBookMO, creditBook));
 		return creditBookMO;
 	}
 
+	@Override
+	public void updateCreditBookList(List<CreditBookMO> creditBookMOLst) throws Exception {
+		List<CreditBook> creditBookLst = new ArrayList<CreditBook>();
+		creditBookMOLst.forEach(creditBookMO -> {
+			try {
+				creditBookLst.add(mapMOtoDO(creditBookMO, new CreditBook()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		creditBookRepository.saveAll(creditBookLst);
+	}
+
 	private CreditBookMO mapDOtoMO(CreditBook creditBook, CreditBookMO creditBookMO) {
 		creditBookMO.setId(creditBook.getId());
 		creditBookMO.setLitre_sale_volume(creditBook.getLitre_sale_volume());
 		creditBookMO.setAmount_of_sale(creditBook.getAmount_of_sale());
-		if(null != creditBook.getCredit_transaction_id())
-		creditBookMO.setCredit_transaction_id(creditBook.getCredit_transaction_id());
+		if (null != creditBook.getCredit_transaction_id())
+			creditBookMO.setCredit_transaction_id(creditBook.getCredit_transaction_id());
 		FuelPriceMO fuelPriceMO = new FuelPriceMO();
 		try {
-			creditBookMO.setVehicleMO(vehicleServiceImpl.getVehicleById(creditBook.getVh_id()));
+			creditBookMO.setVehicleMO(vehicleServiceImpl.getVehicleById(creditBook.getVehicleId()));
 		} catch (ResourceNotFoundException exp) {
-			new ResourceNotFoundException("no vehilce found for id =" + creditBook.getVh_id());
+			new ResourceNotFoundException("no vehilce found for id =" + creditBook.getVehicleId());
 		}
 		try {
 			fuelPriceMO.setFuel_type(fuelPriceServiceImpl.getFuelTypeById(creditBook.getFuel_type_id()));
@@ -139,13 +183,15 @@ public class CreditBookServiceImpl implements CreditBookService {
 
 	private CreditBook mapMOtoDO(CreditBookMO creditBookMO, CreditBook creditBook) throws Exception {
 		creditBook.setId(creditBookMO.getId());
-		creditBook.setVh_id(creditBookMO.getVehicleMO().getId());
+		creditBook.setVehicleId(creditBookMO.getVehicleMO().getId());
 		creditBook.setFuel_type_id(creditBookMO.getFuelPriceMO().getFuel_type().getId());
 		creditBook.setLitre_sale_volume(creditBookMO.getLitre_sale_volume());
 		creditBook.setAmount_of_sale(creditBookMO.getAmount_of_sale());
 		creditBook.setFuelPrice(creditBookMO.getFuelPriceMO().getPrice());
-		CreditTransactionMO creditTransactionMO = getCreditTransByVhOwnerId(creditBookMO.getVehicleMO().getVhOwner());
-		creditBookMO.setCredit_transaction_id(creditTransactionMO.getId());
+		CreditTransactionMO creditTransactionMO = getCreditTransByVhOwnerId(
+				creditBookMO.getVehicleMO().getVhOwner().getId());
+		System.out.println("credit transaction id :::::::::::: " + creditTransactionMO.getId());
+		creditBook.setCredit_transaction_id(creditTransactionMO.getId());
 		try {
 			creditBook.setDttm_of_sale(DateAndTimeUtility.convertStringToTimestamp(creditBookMO.getDttm_of_sale(),
 					DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
@@ -161,13 +207,29 @@ public class CreditBookServiceImpl implements CreditBookService {
 	@Override
 	public CreditTransactionMO createCreditTransaction(CreditTransactionMO creditTransactionMO) throws Exception {
 		try {
-			creditTransactionRepo.save(mapMOtoDO(creditTransactionMO, new CreditTransaction()));
+			CreditTransaction creditTransaction = creditTransactionRepo
+					.save(mapMOtoDO(creditTransactionMO, new CreditTransaction()));
+			List<CreditBookMO> creditBookMOLst = creditTransactionMO.getCreditBookMOLst();
+			if(null != creditBookMOLst)
+				creditBookMOLst.forEach(creditBooKMO -> {
+				creditBooKMO.setCredit_transaction_id(creditTransaction.getId());
+			});
+			updateCreditBookList(creditBookMOLst);
 		} catch (DataIntegrityViolationException pExp) {
 			throw new Exception(pExp.getRootCause().getLocalizedMessage());
 		} catch (Exception exp) {
 			logger.error("Error while creating new credit transaction", exp);
 			throw new Exception("Error while creating new credit transaction", exp);
 		}
+		return creditTransactionMO;
+	}
+
+	@Override
+	public CreditTransactionMO updateCreditTransaction(CreditTransactionMO creditTransactionMO) throws Exception {
+		CreditTransaction creditTransaction = creditTransactionRepo.findById(creditTransactionMO.getId())
+				.orElseThrow(() -> new ResourceNotFoundException(
+						"No credit book found for this id ::" + creditTransactionMO.getId()));
+		creditTransactionRepo.save(mapMOtoDO(creditTransactionMO, creditTransaction));
 		return creditTransactionMO;
 	}
 
@@ -189,13 +251,14 @@ public class CreditBookServiceImpl implements CreditBookService {
 		creditTransaction.setId(creditTransactionMO.getId());
 		creditTransaction.setCredit(creditTransactionMO.getCredit());
 		try {
-			creditTransaction.setCredited_dttm(DateAndTimeUtility.convertStringToTimestamp(
-					creditTransactionMO.getCredited_dttm(), DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
+			if (null != creditTransactionMO.getCredited_dttm())
+				creditTransaction.setCredited_dttm(DateAndTimeUtility.convertStringToTimestamp(
+						creditTransactionMO.getCredited_dttm(), DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
 		} catch (ParseException parseExp) {
 			logger.error("Error while parsing creditted datetime", parseExp);
 			parseExp.printStackTrace();
 		}
-		creditTransaction.setVh_owner_id(creditTransactionMO.getVhOwner().getId());
+		creditTransaction.setVhOwnerId(creditTransactionMO.getVhOwner().getId());
 		creditTransaction.setDebit(creditTransactionMO.getDebit());
 		creditTransaction.setIs_deleted(creditTransactionMO.getIs_deleted());
 		creditTransaction.setDescription(creditTransactionMO.getDescription());
@@ -211,9 +274,9 @@ public class CreditBookServiceImpl implements CreditBookService {
 				creditTransactionMO.setCredited_dttm(
 						DateAndTimeUtility.changeDateFormat(creditTransaction.getCredited_dttm().toString(),
 								DATEFORMAT.DB_DATE_TIME_FORMAT, DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
-			if (creditTransaction.getCreated_dttm() != null)
+			if (creditTransaction.getCreatedDttm() != null)
 				creditTransactionMO.setCreated_dttm(
-						DateAndTimeUtility.changeDateFormat(creditTransaction.getCreated_dttm().toString(),
+						DateAndTimeUtility.changeDateFormat(creditTransaction.getCreatedDttm().toString(),
 								DATEFORMAT.DB_DATE_TIME_FORMAT, DATEFORMAT.CLIENT_DATE_TIME_FORMAT));
 			if (creditTransaction.getModified_dttm() != null)
 				creditTransactionMO.setModified_dttm(
@@ -224,7 +287,7 @@ public class CreditBookServiceImpl implements CreditBookService {
 			parseExp.printStackTrace();
 		}
 
-		creditTransactionMO.setVhOwner(vehicleOwnerServiceImpl.getVehicleOwnerById(creditTransaction.getId()));
+		creditTransactionMO.setVhOwner(vehicleOwnerServiceImpl.getVehicleOwnerById(creditTransaction.getVhOwnerId()));
 		creditTransactionMO.setDebit(creditTransaction.getDebit());
 		creditTransactionMO.setIs_deleted(creditTransaction.getIs_deleted());
 		creditTransactionMO.setDescription(creditTransaction.getDescription());
@@ -232,15 +295,17 @@ public class CreditBookServiceImpl implements CreditBookService {
 	}
 
 	@Override
-	public CreditTransactionMO getCreditTransByVhOwnerId(VehicleOwnerMO vhOwner) throws Exception {
+	public CreditTransactionMO getCreditTransByVhOwnerId(int vhOwnerId) throws Exception {
 		CreditTransactionMO creditTransactionMO = null;
 		try {
-			CreditTransaction creditTransaction = creditTransactionRepo.findByVhOwnerId(vhOwner.getId());
-			creditTransactionMO = mapDOtoMO(creditTransaction, new CreditTransactionMO());
-		}catch (Exception exp){
-			System.out.println("error while getting credit transaction by owner id "+ vhOwner.getId());
+			CreditTransaction creditTransaction = creditTransactionRepo
+					.findFirstByVhOwnerIdOrderByCreatedDttmAsc(vhOwnerId);
+			if (null != creditTransaction)
+				creditTransactionMO = mapDOtoMO(creditTransaction, new CreditTransactionMO());
+		} catch (Exception exp) {
+			System.out.println("error while getting credit transaction by owner id " + vhOwnerId);
 		}
-		
+
 		return creditTransactionMO;
 	}
 

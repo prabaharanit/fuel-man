@@ -1,7 +1,5 @@
 package com.mayavan.fuelman.service;
 
-import java.text.ParseException;
-
 import javax.transaction.Transactional;
 
 import org.junit.Assert;
@@ -17,8 +15,6 @@ import com.mayavan.fuelman.repo.model.FuelPriceMO;
 import com.mayavan.fuelman.repo.model.FuelTypeMO;
 import com.mayavan.fuelman.repo.model.VehicleMO;
 import com.mayavan.fuelman.repo.model.VehicleOwnerMO;
-import com.mayavan.fuelman.util.DateAndTimeUtility;
-import com.mayavan.fuelman.util.DateAndTimeUtility.DATEFORMAT;
 
 @SpringBootTest
 class CreditBookServiceImplTest {
@@ -26,13 +22,23 @@ class CreditBookServiceImplTest {
 	@Autowired
 	private CreditBookService creditBookService;
 
-	@Test
+	@Ignore
 	@Transactional
 	@Rollback
 	public void testGetFuelPriceForDttmOfSale() {
 		try {
 			CreditBookMO creditBookMO = getCreditBookMO();
 			creditBookService.createCreditBook(creditBookMO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("get fuel price for dttm for sale");
+		}
+	}
+	
+	@Test
+	public void testAllCreditBookEntriesByVhOwner() {
+		try {
+			creditBookService.getCreditEntriesByVhOwnerId(3);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("get fuel price for dttm for sale");
@@ -78,6 +84,9 @@ class CreditBookServiceImplTest {
 		creditBookMO.setLitre_sale_volume(22.2);
 		VehicleMO vehicleMO = new VehicleMO();
 		vehicleMO.setId(1);
+		VehicleOwnerMO vhOwner = new VehicleOwnerMO();
+		vhOwner.setId(2);
+		vehicleMO.setVhOwner(vhOwner);
 		creditBookMO.setVehicleMO(vehicleMO);
 		FuelPriceMO fuelPriceMO = new FuelPriceMO();
 		FuelTypeMO fuelType = new FuelTypeMO();
@@ -86,13 +95,7 @@ class CreditBookServiceImplTest {
 		fuelPriceMO.setPrice(78);
 		creditBookMO.setFuelPriceMO(fuelPriceMO);
 		creditBookMO.setComments("test data");
-		try {
-			creditBookMO.setDttm_of_sale(DateAndTimeUtility.changeDateFormat("30 12 2020 13:31:16",
-					DATEFORMAT.DB_DATE_TIME_FORMAT, DATEFORMAT.CLIENT_DATE_TIME_FORMAT_DTTM_OF_SALE));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		creditBookMO.setDttm_of_sale("30.12.2020 13:31:16");
 		return creditBookMO;
 
 	}

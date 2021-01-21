@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
+@Entity(name = "credit_book")
 @Table(name = "credit_book")
 public class CreditBook {
 
@@ -56,11 +56,11 @@ public class CreditBook {
 	}
 
 	@Column(name = "vh_id", nullable = false)
-	public int getVh_id() {
+	public int getVehicleId() {
 		return vh_id;
 	}
 
-	public void setVh_id(int vh_id) {
+	public void setVehicleId(int vh_id) {
 		this.vh_id = vh_id;
 	}
 

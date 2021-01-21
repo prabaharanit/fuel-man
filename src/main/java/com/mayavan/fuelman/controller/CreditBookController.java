@@ -53,6 +53,19 @@ public class CreditBookController {
 		}
 		return creditBookMOs;
 	}
+	
+	@GetMapping("/creditEntriesByVhOwner/{id}")
+	public List<CreditBookMO> getAllCreditBookByVhOwner(@PathVariable(value = "id") int vhOwnerId) throws Exception {
+		System.out.println("inside get all credit book for vehicle owner id " + vhOwnerId);
+		List<CreditBookMO> creditBookMOs = null;
+		try {
+			creditBookMOs = creditBookServiceImpl.getCreditEntriesByVhOwnerId(vhOwnerId);
+		} catch (Exception exp) {
+			exp.printStackTrace();
+		}
+		return creditBookMOs;
+	}
+
 
 	@GetMapping("/creditEntry/{id}")
 	public ResponseEntity<CreditBookMO> getCreditBookById(@PathVariable(value = "id") int creditBookId)
