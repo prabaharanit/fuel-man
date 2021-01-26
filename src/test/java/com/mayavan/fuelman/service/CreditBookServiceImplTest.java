@@ -20,12 +20,12 @@ import com.mayavan.fuelman.repo.model.VehicleOwnerMO;
 class CreditBookServiceImplTest {
 
 	@Autowired
-	private CreditBookService creditBookService;
+	public CreditBookService creditBookService;
 
-	@Ignore
+	@Test
 	@Transactional
 	@Rollback
-	public void testGetFuelPriceForDttmOfSale() {
+	public void testCreateCreditBook() {
 		try {
 			CreditBookMO creditBookMO = getCreditBookMO();
 			creditBookService.createCreditBook(creditBookMO);
@@ -36,6 +36,19 @@ class CreditBookServiceImplTest {
 	}
 	
 	@Test
+	@Transactional
+	@Rollback
+	public void testUpdateCreditBook() {
+		try {
+			CreditBookMO creditBookMO = getCreditBookMO();
+			creditBookService.updateCreditBook(creditBookMO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("get fuel price for dttm for sale");
+		}
+	}
+	
+	@Ignore
 	public void testAllCreditBookEntriesByVhOwner() {
 		try {
 			creditBookService.getCreditEntriesByVhOwnerId(3);
@@ -45,8 +58,10 @@ class CreditBookServiceImplTest {
 		}
 	}
 
-	@Ignore
-	public void testAllCreditBookEntries() {
+	@Test
+	@Transactional
+	@Rollback
+	public void testAllPaidCrdBook() {
 		try {
 			creditBookService.getAllCreditBook();
 		} catch (Exception e) {
@@ -54,7 +69,10 @@ class CreditBookServiceImplTest {
 			Assert.fail("get fuel price for dttm for sale");
 		}
 	}
+	
 
+
+	
 	@Ignore
 	@Transactional
 	@Rollback
@@ -70,17 +88,18 @@ class CreditBookServiceImplTest {
 
 	private CreditTransactionMO getCreditTransactionMO() {
 		CreditTransactionMO creditTransactionMO = new CreditTransactionMO();
-		creditTransactionMO.setCredit(20000);
+		creditTransactionMO.setCredit(5000);
 		creditTransactionMO.setCredited_dttm("30.12.2020 13:31:16");
 		VehicleOwnerMO vehicleOwner = new VehicleOwnerMO();
-		vehicleOwner.setId(1);
+		vehicleOwner.setId(2);
 		creditTransactionMO.setVhOwner(vehicleOwner);
 		return creditTransactionMO;
 	}
 
 	private CreditBookMO getCreditBookMO() {
 		CreditBookMO creditBookMO = new CreditBookMO();
-		creditBookMO.setAmount_of_sale(23243.78);
+		creditBookMO.setAmount_of_sale(27);
+		//creditBookMO.setId(159);
 		creditBookMO.setLitre_sale_volume(22.2);
 		VehicleMO vehicleMO = new VehicleMO();
 		vehicleMO.setId(1);
