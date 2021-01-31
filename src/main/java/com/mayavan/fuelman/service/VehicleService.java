@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.mayavan.fuelman.controller.model.VehicleMO;
+import com.mayavan.fuelman.controller.model.VehicleTypeMO;
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.exception.UniqueConstraintException;
-import com.mayavan.fuelman.repo.model.VehicleMO;
-import com.mayavan.fuelman.repo.model.VehicleTypeMO;
 
 @Service
 public interface VehicleService {

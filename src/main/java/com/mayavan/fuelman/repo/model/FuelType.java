@@ -9,8 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "fueltype")
+@Entity(name = "fuel_type")
+@Table(name = "fuel_type")
 public class FuelType {
 
 	private int id;
@@ -24,7 +24,8 @@ public class FuelType {
 
 	}
 
-	public FuelType(String type, String name, Timestamp created_dttm, Timestamp modified_dttm, int is_deleted) {
+	public FuelType(int id, String type, String name, Timestamp created_dttm, Timestamp modified_dttm, int is_deleted) {
+		this.id = id;
 		this.type = type;
 		this.name = name;
 		this.created_dttm = created_dttm;

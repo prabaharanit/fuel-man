@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
-import com.mayavan.fuelman.repo.model.CreditBookMO;
-import com.mayavan.fuelman.repo.model.CreditTransactionMO;
-import com.mayavan.fuelman.repo.model.FuelPriceMO;
-import com.mayavan.fuelman.repo.model.FuelTypeMO;
-import com.mayavan.fuelman.repo.model.VehicleMO;
-import com.mayavan.fuelman.repo.model.VehicleOwnerMO;
+import com.mayavan.fuelman.controller.model.CreditBookMO;
+import com.mayavan.fuelman.controller.model.CreditTransactionMO;
+import com.mayavan.fuelman.controller.model.FuelPriceMO;
+import com.mayavan.fuelman.controller.model.FuelTypeMO;
+import com.mayavan.fuelman.controller.model.VehicleMO;
+import com.mayavan.fuelman.controller.model.VehicleOwnerMO;
 
 @SpringBootTest
 class CreditBookServiceImplTest {

@@ -11,15 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.mayavan.fuelman.controller.model.VehicleMO;
+import com.mayavan.fuelman.controller.model.VehicleOwnerMO;
+import com.mayavan.fuelman.controller.model.VehicleTypeMO;
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.exception.UniqueConstraintException;
 import com.mayavan.fuelman.repo.VehicleRepository;
 import com.mayavan.fuelman.repo.VehicleTypeRepository;
 import com.mayavan.fuelman.repo.model.Vehicle;
-import com.mayavan.fuelman.repo.model.VehicleMO;
-import com.mayavan.fuelman.repo.model.VehicleOwnerMO;
 import com.mayavan.fuelman.repo.model.VehicleType;
-import com.mayavan.fuelman.repo.model.VehicleTypeMO;
 import com.mayavan.fuelman.util.DateAndTimeUtility;
 import com.mayavan.fuelman.util.DateAndTimeUtility.DATEFORMAT;
 

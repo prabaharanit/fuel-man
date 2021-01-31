@@ -17,14 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.mayavan.fuelman.controller.model.FuelPriceMO;
+import com.mayavan.fuelman.controller.model.FuelTypeMO;
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.exception.UniqueConstraintException;
 import com.mayavan.fuelman.repo.FuelPriceRepository;
 import com.mayavan.fuelman.repo.FuelTypeRepository;
 import com.mayavan.fuelman.repo.model.FuelPrice;
-import com.mayavan.fuelman.repo.model.FuelPriceMO;
 import com.mayavan.fuelman.repo.model.FuelType;
-import com.mayavan.fuelman.repo.model.FuelTypeMO;
 import com.mayavan.fuelman.util.DateAndTimeUtility;
 import com.mayavan.fuelman.util.DateAndTimeUtility.DATEFORMAT;
 

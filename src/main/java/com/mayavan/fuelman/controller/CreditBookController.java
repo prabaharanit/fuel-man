@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mayavan.fuelman.controller.model.CreditBookMO;
+import com.mayavan.fuelman.controller.model.CreditTransactionMO;
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
-import com.mayavan.fuelman.repo.model.CreditBookMO;
-import com.mayavan.fuelman.repo.model.CreditTransactionMO;
 import com.mayavan.fuelman.service.CreditBookService;
 
 @CrossOrigin(origins = "http://localhost:8081")

@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.mayavan.fuelman.controller.model.CreditBookMO;
+import com.mayavan.fuelman.controller.model.CreditTransactionMO;
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
-import com.mayavan.fuelman.repo.model.CreditBookMO;
-import com.mayavan.fuelman.repo.model.CreditTransactionMO;
 
 @Service
 public interface CreditBookService {

@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mayavan.fuelman.controller.model.FuelPriceMO;
+import com.mayavan.fuelman.controller.model.FuelTypeMO;
 import com.mayavan.fuelman.exception.ResourceNotFoundException;
 import com.mayavan.fuelman.exception.UniqueConstraintException;
 import com.mayavan.fuelman.repo.FuelTypeRepository;
-import com.mayavan.fuelman.repo.model.FuelPriceMO;
 import com.mayavan.fuelman.repo.model.FuelType;
-import com.mayavan.fuelman.repo.model.FuelTypeMO;
 import com.mayavan.fuelman.service.FuelService;
 
 @CrossOrigin(origins = "http://localhost:8081")
