@@ -19,6 +19,8 @@ public interface FuelService {
 	
 	public List<FuelPriceMO> getAllFuelPrices();
 	
+	public List<FuelTypeMO> getAllFuelType();
+	
 	public FuelPriceMO getFuelPriceByDateTime(String dateTime, int fuelTypeId)throws Exception;
 	
 	public FuelPriceMO getFuelPriceById(int Id)throws ResourceNotFoundException;

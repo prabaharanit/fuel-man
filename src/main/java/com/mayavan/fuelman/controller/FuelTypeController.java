@@ -43,9 +43,9 @@ public class FuelTypeController {
 	private FuelService fuelService;
 
 	@GetMapping("/fueltypes")
-	public List<FuelType> getAllFuelTypes() {
+	public List<FuelTypeMO> getAllFuelTypes() {
 		System.out.println("inside get all fuel types");
-		return fuelTypeRepository.findAll();
+		return fuelService.getAllFuelType();
 	}
 
 	@GetMapping("/fueltypes/{id}")

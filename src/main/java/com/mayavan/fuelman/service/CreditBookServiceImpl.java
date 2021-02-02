@@ -110,8 +110,6 @@ public class CreditBookServiceImpl implements CreditBookService {
 				}
 			}
 		});
-		creditBookMOs.forEach(obj -> System.out.println("date of sale ::::" + obj.getCreated_dttm()));
-		// TODO Auto-generated method stub
 		return creditBookMOs;
 	}
 

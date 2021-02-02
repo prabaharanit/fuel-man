@@ -237,4 +237,15 @@ public class FuelServiceImpl implements FuelService {
 		return fuelPriceMO;
 	}
 
+	@Override
+	public List<FuelTypeMO> getAllFuelType() {
+		List<FuelType> fuelTypes = fuelTypeRepository.findAll();
+		List<FuelTypeMO> fuelTypeMOs = new ArrayList<>();
+		fuelTypes.forEach(fuelType -> {
+			fuelTypeMOs.add(mapDOtoMO(fuelType, new FuelTypeMO()));
+		});
+		
+		return fuelTypeMOs;
+	}
+
 }
